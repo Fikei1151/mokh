@@ -15,13 +15,18 @@ from models import User, Attendance, Leave,Holiday,DailyStatistics
 from database import db
 from statistics_api import daily_statistics, weekly_statistics, monthly_statistics, week_range, month_range
 from api import *
-
+import urllib.parse
 
 statusUpdates = [] # ตรงนี้ครับยรย
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Fikei1151:Fikree24@localhost/attendance'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Fikei1151:Fikree24@localhost/attendance'
+DATABASE_URL = os.getenv('DATABASE_URL')
 
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 
 db.init_app(app)
 app.secret_key = os.urandom(24)
@@ -179,6 +184,7 @@ def statistics():
     monthly_stats = monthly_statistics() # no argument here
 
     return render_template('statistics.html', daily_stats=daily_stats, weekly_stats=weekly_stats, monthly_stats=monthly_stats)
+
 @app.route('/api/login', methods=['POST'])
 def app_login():
 
