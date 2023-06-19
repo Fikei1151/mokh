@@ -24,7 +24,8 @@ statusUpdates = [] # ตรงนี้ครับยรย
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Fikei1151:Fikree24@localhost/attendance'
 # เชื่อมต่อกับฐานข้อมูล PostgreSQL ใน Heroku
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://', 1)
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://', 1)
+database_url = os.environ.get("DATABASE_URL")
 conn = psycopg2.connect(
     host="localhost",
     port=5432,
