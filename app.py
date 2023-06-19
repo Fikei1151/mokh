@@ -21,7 +21,13 @@ statusUpdates = [] # ตรงนี้ครับยรย
 
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Fikei1151:Fikree24@localhost/attendance'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+url = os.environ.get('DATABASE_URL')
+if url:
+    url = urllib.parse.urlparse(url)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{url.username}:{url.password}@{url.hostname}:{url.port}/{url.path[1:]}"
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Fikei1151:Fikree24@localhost:5432/attendance'
+
 
 db.init_app(app)
 app.secret_key = os.urandom(24)
