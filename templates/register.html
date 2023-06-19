@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block sidebar %}
+  <!-- เพิ่มเนื้อหาของแถบด้านข้างที่นี่ -->
+  <!-- คัดลอกข้อความของแถบด้านข้างจาก base.html และปรับเปลี่ยนเมนูที่เลือก -->
+  <div class="container">
+  
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center w-100">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-8 col-lg-6 col-xxl-3">
+            <div class="card mb-0">
+                <div class="card-body">
+                    <a href="{{ url_for('index') }}" class="text-nowrap logo-img text-center d-block py-3 w-100">
+                        <img src="../assets/images/logos/dark-logo.svg" width="180" alt="">
+                    </a>
+                    <p class="text-center">Your Social Campaigns</p>
+                    <form method="POST" action="{{ url_for('register') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name:</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="surname" class="form-label">Surname:</label>
+                            <input type="text" class="form-control" id="surname" name="surname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_card" class="form-label">ID card:</label>
+                            <input type="text" class="form-control" id="id_card" name="id_card" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="position" class="form-label">Position:</label>
+                            <input type="text" class="form-control" id="position" name="position" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="account_type" class="form-label">Account Type:</label>
+                            <select class="form-control" id="account_type" name="account_type">
+                                <option value="user">User</option>
+                                <option value="manager">Manager</option>
+                                <option value="head_of_department">Head of Department</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <input type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2" value="Sign Up">
+                    </form>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <p class="fs-4 mb-0 fw-bold">Already have an Account?</p>
+                        <a class="text-primary fw-bold ms-2" href="{{ url_for('web_login') }}">Sign In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+<script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}

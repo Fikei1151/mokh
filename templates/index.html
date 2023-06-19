@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="text-center my-4">Employee List</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">ชื่อ-นามสกุล</th>
+        <th scope="col">ไอดี</th>
+        <th scope="col">ตำแหน่ง</th>
+        <th scope="col">จำนวนการขาด</th>
+        <th scope="col">จำนวนการลา</th>
+        <th scope="col">จำนวนการมาสาย</th>
+        <th scope="col">จำนวนที่ไม่ได้กดออกงาน</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users.items %}
+        <tr>
+          <td>{{ loop.index + counter_start - 1 }}</td>
+          <td><a href="{{ url_for('profile', id_card=user.id_card) }}">{{ user.name }} {{ user.surname }}</a></td>
+          <td>{{ user.id_card }}</td>
+          <td>{{ user.position }}</td>
+          <td>{{ user.absences }}</td>
+          <td>{{ user.approved_leaves }}</td>
+          <td>{{ user.late }}</td>
+          <td>{{ user.not_checked_out }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+  <!-- เพิ่มปุ่มการเลื่อนหน้า -->
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      {% for p in users.iter_pages() %}
+        {% if not p %}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% else %}
+          <li class="page-item{% if p == users.page %} active{% endif %}">
+            <a class="page-link" href="{{ url_for('index', page=p) }}">{{ p }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
+{% endblock %}

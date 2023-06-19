@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>วันหยุด</h1>
+<form method="POST">
+    <label for="date">วันที่:</label>
+    <input type="date" id="date" name="date" required>
+    <label for="name">ชื่อวันหยุด:</label>
+    <input type="text" id="name" name="name" required>
+    <input type="submit" value="เพิ่มวันหยุด">
+</form>
+<ul>
+    {% for holiday in holidays %}
+    <li>{{ holiday.date }}: {{ holiday.name }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
