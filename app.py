@@ -16,25 +16,19 @@ from database import db
 from statistics_api import daily_statistics, weekly_statistics, monthly_statistics, week_range, month_range
 from api import *
 import urllib.parse
-import psycopg2
 
 
 statusUpdates = [] # ตรงนี้ครับยรย
 
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Fikei1151:Fikree24@localhost/attendance'
-# เชื่อมต่อกับฐานข้อมูล PostgreSQL ใน Heroku
-#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://', 1)
-database_url = os.environ.get("DATABASE_URL")
-conn = psycopg2.connect(
-    host="localhost",
-    port=5432,
-    dbname="attendance",
-    user="Fikei1151",
-    password="Fikree24@"
-)
-# สร้าง Cursor object เพื่อทำงานกับฐานข้อมูล
-cursor = conn.cursor()
+url = os.environ.get('DATABASE_URL')
+if url:
+    url = urllib.parse.urlparse(url)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{url.username}:{url.password}@{url.hostname}:{url.port}/{url.path[1:]}"
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Fikei1151:Fikree24@localhost:5432/attendance'
+
 
 db.init_app(app)
 app.secret_key = os.urandom(24)
@@ -505,12 +499,6 @@ def check_attendance():
 scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=18, minute=1)
 scheduler.init_app(app)
 scheduler.start()
-# Commit การเปลี่ยนแปลง (ถ้ามีการเปลี่ยนแปลงข้อมูล)
-conn.commit()
-
-# ปิดการเชื่อมต่อกับฐานข้อมูล
-cursor.close()
-conn.close()
 
 if __name__ == '__main__':
     with app.app_context():
