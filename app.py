@@ -21,8 +21,8 @@ from flask_migrate import Migrate
 statusUpdates = [] # ตรงนี้ครับยรย
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://nzxygpbspgyhsc:3be6e47dafcf9fa02e49c334c34e009b789826dc99d3b2f7e12ab02ad4089b93@ec2-34-226-11-94.compute-1.amazonaws.com:5432/d1guu50dk4lm9q'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://nzxygpbspgyhsc:3be6e47dafcf9fa02e49c334c34e009b789826dc99d3b2f7e12ab02ad4089b93@ec2-34-226-11-94.compute-1.amazonaws.com:5432/d1guu50dk4lm9q'
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 
 
 #db.init_app(app)
