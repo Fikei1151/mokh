@@ -22,8 +22,7 @@ statusUpdates = [] # ตรงนี้ครับยรย
 
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Fikei1151:Fikree24@localhost/attendance'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://mzhrvpsrhsjikd:ed6be8b1d949829607d389e8ac48226b4979de2d95a432e8959f4ffa32a484d6@ec2-52-5-167-89.compute-1.amazonaws.com:5432/attendance'
-
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 
 
 db.init_app(app)
