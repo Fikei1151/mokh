@@ -21,15 +21,15 @@ from flask_migrate import Migrate
 statusUpdates = [] # ตรงนี้ครับยรย
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://nzxygpbspgyhsc:3be6e47dafcf9fa02e49c334c34e009b789826dc99d3b2f7e12ab02ad4089b93@ec2-34-226-11-94.compute-1.amazonaws.com:5432/d1guu50dk4lm9q'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://nzxygpbspgyhsc:3be6e47dafcf9fa02e49c334c34e009b789826dc99d3b2f7e12ab02ad4089b93@ec2-34-226-11-94.compute-1.amazonaws.com:5432/d1guu50dk4lm9q'
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 
 
-db.init_app(app)
+#db.init_app(app)
 app.secret_key = os.urandom(24)
 scheduler = APScheduler() 
 migrate = Migrate(app, db)
-
+db.init_app(app)
 
 class MonthForm(FlaskForm):
     month = SelectField('เลือกเดือน', choices=[], validators=[DataRequired()])
@@ -497,8 +497,7 @@ scheduler.init_app(app)
 scheduler.start()
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
+   ## db.create_all()
     #app.run(host='0.0.0.0', port=5000)
     #app.run(debug=True, port=5001)
     app.run()
