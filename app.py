@@ -36,8 +36,7 @@ class MonthForm(FlaskForm):
 
 
 
-@app.route('/')
-# ตำแหน่งนี้จะใช้สำหรับเพิ่มข้อมูลผู้ใช้ใหม่เข้าสู่ระบบ
+
 @app.route('/')
 def home():
     return redirect(url_for('web_login'))
@@ -89,14 +88,15 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash('Registration successful. Please log in.', 'success')
-            return redirect(url_for('index'))
+            #return redirect(url_for('index'))
+            return redirect(url_for('web_login'))
     return render_template('register.html')
 
 
 @app.route('/index')
 def index():
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('web_login'))
 
     page = request.args.get('page', 1, type=int)
     users = User.query.order_by(User.name, User.surname).paginate(page=page, per_page=10)
