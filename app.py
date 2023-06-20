@@ -16,7 +16,7 @@ from database import db
 from statistics_api import daily_statistics, weekly_statistics, monthly_statistics, week_range, month_range
 from api import *
 import urllib.parse
-
+from flask_migrate import Migrate
 
 statusUpdates = [] # ตรงนี้ครับยรย
 
@@ -27,7 +27,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Fikei1151:Fikree24@localho
 db.init_app(app)
 app.secret_key = os.urandom(24)
 scheduler = APScheduler() 
-
+migrate = Migrate(app, db)
 
 
 class MonthForm(FlaskForm):
