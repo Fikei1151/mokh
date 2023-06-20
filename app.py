@@ -37,6 +37,8 @@ class MonthForm(FlaskForm):
 
 
 @app.route('/')
+# ตำแหน่งนี้จะใช้สำหรับเพิ่มข้อมูลผู้ใช้ใหม่เข้าสู่ระบบ
+@app.route('/')
 def home():
     return redirect(url_for('web_login'))
 
@@ -62,7 +64,6 @@ def web_login():
             else:
                 return render_template('login.html')
     return render_template('login.html')
-
 # หมดยาวๆ
 
 @app.route('/logout')
@@ -497,8 +498,8 @@ scheduler.init_app(app)
 scheduler.start()
 
 if __name__ == '__main__':
-    db.create_all()
-    #app.run(host='0.0.0.0', port=5000)
+    with app.app_context():
+        db.create_all()
+        #app.run(host='0.0.0.0', port=5000)
     #app.run(debug=True, port=5001)
     app.run()
-
