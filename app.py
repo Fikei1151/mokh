@@ -20,6 +20,8 @@ from flask_migrate import Migrate
 import logging
 from sqlalchemy import func
 from pytz import timezone  # Import this
+import pytz
+
 statusUpdates = [] # ตรงนี้ครับยรย
 
 app = Flask(__name__)
@@ -179,12 +181,13 @@ def add_attendance():
 @app.route('/statistics', methods=['GET'])
 def statistics():
     today = datetime.today().date()
+    now = datetime.now(pytz.timezone('Asia/Bangkok')).strftime('%Y-%m-%d %H:%M:%S') 
 
     daily_stats = daily_statistics()
     weekly_stats = weekly_statistics() # no argument here
     monthly_stats = monthly_statistics() # no argument here
 
-    return render_template('statistics.html', daily_stats=daily_stats, weekly_stats=weekly_stats, monthly_stats=monthly_stats)
+    return render_template('statistics.html', daily_stats=daily_stats, weekly_stats=weekly_stats, monthly_stats=monthly_stats, current_time=now)
 
 @app.route('/api/login', methods=['POST'])
 def app_login():
@@ -466,7 +469,7 @@ def get_latest_checkout(id_card):
 
 def check_attendance():
     print("Checking attendance...")
-    today = date.today().astimezone(timezone('Asia/Bangkok')).date()
+    today = datetime.now(pytz.timezone('Asia/Bangkok')).date()
 
     # ตรวจสอบว่าเป็นวันหยุดหรือไม่
     holiday = Holiday.query.filter_by(date=today).first()
@@ -476,31 +479,20 @@ def check_attendance():
         return
 
     users = User.query.all()
-    daily_stats = DailyStatistics(date=today)
 
     for user in users:
         attendance = Attendance.query.filter_by(employee_id=user.id_card).filter(func.date(Attendance.check_in_timestamp) == today).first()
         if not attendance:
             # User did not check in today, mark as absence
-            absence = Attendance(employee_id=user.id_card, check_in_timestamp=today, status='ขาด')
+            absence = Attendance(employee_id=user.id_card, check_in_timestamp=today, check_out_timestamp=today, status='ขาด')
             db.session.add(absence)
-            daily_stats.total_absent += 1
             print(f"User {user.id_card} is absent")
-        else:
-            if attendance.status == 'สาย':
-                daily_stats.total_late += 1
-                print(f"User {user.id_card} is late")
-            if attendance.check_out_timestamp is None:
-                daily_stats.total_not_checked_out += 1
-                print(f"User {user.id_card} did not check out")
 
-    daily_stats.total_employees = len(users)
-    db.session.add(daily_stats)
     db.session.commit()
 
     print(f"Finished checking attendance for {today}")
 
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=30)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=00)
 scheduler.init_app(app)
 scheduler.start()
 
