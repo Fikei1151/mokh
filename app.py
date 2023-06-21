@@ -17,6 +17,8 @@ from statistics_api import daily_statistics, weekly_statistics, monthly_statisti
 from api import *
 import urllib.parse
 from flask_migrate import Migrate
+import logging
+from sqlalchemy import func
 
 statusUpdates = [] # ตรงนี้ครับยรย
 
@@ -219,8 +221,8 @@ def checkin():
     check_in_timestamp = datetime.now()
 
     # Define the work start time as 7:00 and late check-in threshold as 8:00.
-    work_start_time = check_in_timestamp.replace(hour=14, minute=20, second=0, microsecond=0)
-    late_threshold = check_in_timestamp.replace(hour=14, minute=30, second=0, microsecond=0)
+    work_start_time = check_in_timestamp.replace(hour=18, minute=40, second=0, microsecond=0)
+    late_threshold = check_in_timestamp.replace(hour=18, minute=45, second=0, microsecond=0)
 
     # If current time is earlier than work start time, return error.
     if check_in_timestamp < work_start_time:
@@ -251,7 +253,7 @@ def checkout():
     check_out_timestamp = datetime.now()
 
     # Define the work end time window as 16:00 to 17:00.
-    work_end_start_time = check_out_timestamp.replace(hour=14, minute=35, second=0, microsecond=0)
+    work_end_start_time = check_out_timestamp.replace(hour=18, minute=50, second=0, microsecond=0)
     work_end_end_time = check_out_timestamp.replace(hour=23, minute=0, second=0, microsecond=0)
 
     # If current time is not within work end time window, return error.
@@ -460,42 +462,48 @@ def get_latest_checkout(id_card):
         "check_out_timestamp": attendance.check_out_timestamp.isoformat()
     }), 200
 
+
+
 def check_attendance():
+    print("Checking attendance...")
     today = date.today()
 
     # ตรวจสอบว่าเป็นวันหยุดหรือไม่
     holiday = Holiday.query.filter_by(date=today).first()
     if holiday:
         # ถ้าเป็นวันหยุด ควรจะไม่ทำการตรวจสอบว่าพนักงานขาดงาน
+        print(f"Today {today} is a holiday, skipping attendance check")
         return
 
     users = User.query.all()
     daily_stats = DailyStatistics(date=today)
 
     for user in users:
-        attendance = Attendance.query.filter_by(employee_id=user.id_card, check_in_timestamp=today).first()
+        attendance = Attendance.query.filter_by(employee_id=user.id_card).filter(func.date(Attendance.check_in_timestamp) == today).first()
         if not attendance:
             # User did not check in today, mark as absence
             absence = Attendance(employee_id=user.id_card, check_in_timestamp=today, status='ขาด')
             db.session.add(absence)
             daily_stats.total_absent += 1
+            print(f"User {user.id_card} is absent")
         else:
             if attendance.status == 'สาย':
                 daily_stats.total_late += 1
+                print(f"User {user.id_card} is late")
             if attendance.check_out_timestamp is None:
                 daily_stats.total_not_checked_out += 1
+                print(f"User {user.id_card} did not check out")
 
     daily_stats.total_employees = len(users)
     db.session.add(daily_stats)
     db.session.commit()
 
+    print(f"Finished checking attendance for {today}")
 
-# กำหนดการทำงานจัดตารางสำหรับการตรวจสอบการเข้างาน
-# กำหนดการทำงานจัดตารางสำหรับการตรวจสอบการเข้างาน
-# เพิ่ม job ใน scheduler ให้ทำงานในเวลา 00:01 น. ของวันจันทร์ถึงศุกร์
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=18, minute=1)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=1)
 scheduler.init_app(app)
 scheduler.start()
+
 
 if __name__ == '__main__':
     with app.app_context():
