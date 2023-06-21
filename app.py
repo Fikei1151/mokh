@@ -90,7 +90,7 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash('Registration successful. Please log in.', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('register'))
             #return redirect(url_for('web_login'))
     return render_template('register.html')
 
