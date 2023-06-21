@@ -19,7 +19,7 @@ import urllib.parse
 from flask_migrate import Migrate
 import logging
 from sqlalchemy import func
-
+from pytz import timezone  # Import this
 statusUpdates = [] # ตรงนี้ครับยรย
 
 app = Flask(__name__)
@@ -167,7 +167,7 @@ def holidays():
 def add_attendance():
     # รับข้อมูลจากแอพพลิเคชัน (ควรตรวจสอบความถูกต้องด้วย)
     id_card = request.form['id_card']
-    timestamp = request.form['timestamp']
+    timestamp = timestamp = datetime.now(timezone('UTC')).astimezone(timezone('Asia/Bangkok'))
     status = request.form['status']
 
     new_attendance = Attendance(id_card=id_card, timestamp=timestamp, status=status)
@@ -218,11 +218,11 @@ def checkin():
     if employee is None:
         return jsonify({"error": "Employee not found"}), 404
 
-    check_in_timestamp = datetime.now()
+    check_in_timestamp = datetime.now(timezone('UTC')).astimezone(timezone('Asia/Bangkok'))
 
     # Define the work start time as 7:00 and late check-in threshold as 8:00.
-    work_start_time = check_in_timestamp.replace(hour=18, minute=40, second=0, microsecond=0)
-    late_threshold = check_in_timestamp.replace(hour=18, minute=45, second=0, microsecond=0)
+    work_start_time = check_in_timestamp.replace(hour=19, minute=5, second=0, microsecond=0)
+    late_threshold = check_in_timestamp.replace(hour=19, minute=10, second=0, microsecond=0)
 
     # If current time is earlier than work start time, return error.
     if check_in_timestamp < work_start_time:
@@ -250,10 +250,10 @@ def checkout():
     if employee is None:
         return jsonify({"error": "Employee not found"}), 404
 
-    check_out_timestamp = datetime.now()
+    check_out_timestamp = datetime.now(timezone('UTC')).astimezone(timezone('Asia/Bangkok'))
 
     # Define the work end time window as 16:00 to 17:00.
-    work_end_start_time = check_out_timestamp.replace(hour=18, minute=50, second=0, microsecond=0)
+    work_end_start_time = check_out_timestamp.replace(hour=19, minute=15, second=0, microsecond=0)
     work_end_end_time = check_out_timestamp.replace(hour=23, minute=0, second=0, microsecond=0)
 
     # If current time is not within work end time window, return error.
@@ -273,7 +273,7 @@ def checkout():
 def checkin_shift():
     try:
         employee_id = request.json['employee_id']
-        timestamp = parse(request.json['timestamp']) # parse timestamp
+        timestamp = datetime.now(timezone('UTC')).astimezone(timezone('Asia/Bangkok'))
         new_attendance = Attendance(id_card=employee_id, timestamp=timestamp, status="เข้าเวร")
         db.session.add(new_attendance)
         db.session.commit()
@@ -466,7 +466,7 @@ def get_latest_checkout(id_card):
 
 def check_attendance():
     print("Checking attendance...")
-    today = date.today()
+    today = date.today().astimezone(timezone('Asia/Bangkok')).date()
 
     # ตรวจสอบว่าเป็นวันหยุดหรือไม่
     holiday = Holiday.query.filter_by(date=today).first()
@@ -500,7 +500,7 @@ def check_attendance():
 
     print(f"Finished checking attendance for {today}")
 
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=1)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=30)
 scheduler.init_app(app)
 scheduler.start()
 
