@@ -488,7 +488,12 @@ def check_attendance():
             db.session.add(absence)
             print(f"User {user.id_card} is absent")
 
+    
+    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=00)
+    scheduler.init_app(app)
+    scheduler.start()
     db.session.commit()
+
 
     print(f"Finished checking attendance for {today}")
 
