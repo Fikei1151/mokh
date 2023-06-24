@@ -21,15 +21,18 @@ class User(db.Model):
     position = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
     account_type = db.Column(db.String(100), nullable=False)
+    gender = db.Column(db.String(10), nullable=False)  # Add this line
 
-    def __init__(self, id_card, password, name, surname, position, email, account_type):
+    def __init__(self, id_card, password, name, surname, position, email, account_type, gender):
         self.id_card = id_card
         self.password = password
         self.name = name
         self.surname = surname
         self.position = position
         self.email = email
-        self.account_type = account_type 
+        self.account_type = account_type
+        self.gender = gender  # And this line
+
 
 class Leave(db.Model):
     id = db.Column(db.Integer, primary_key=True)
