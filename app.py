@@ -95,9 +95,12 @@ def register():
             new_user = User(id_card=id_card, password=password, name=name, surname=surname, position=position, email=email, account_type=account_type, gender=gender)
             db.session.add(new_user)
             db.session.commit()
-            flash('Registration successful. Please log in.', 'success')
-            return redirect(url_for('register'))
+            # ทำการล็อกอินผู้ใช้ที่ทำการสมัครสมาชิกล่าสุด
+            session['user_id'] = new_user.id_card
+            flash('Registration successful. You are now logged in.', 'success')
+            return redirect(url_for('index')) # Redirect to homepage after successful login
     return render_template('register.html')
+
 
 
 @app.route('/index')
