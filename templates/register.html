@@ -31,10 +31,25 @@
                             <label for="id_card" class="form-label">ID card:</label>
                             <input type="text" class="form-control" id="id_card" name="id_card" required>
                         </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">Gender:</label>
+                            <select class="form-control" id="gender" name="gender">
+                                <option value="male">ชาย</option>
+                                <option value="female">หญิง</option>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label for="position" class="form-label">Position:</label>
-                            <input type="text" class="form-control" id="position" name="position" required>
+                            <select class="form-control" id="position" name="position">
+                                <option value="primary">ประถมศึกษา</option>
+                                <option value="secondary">มัธยมศึกษา</option>
+                            </select>
                         </div>
+                        
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address:</label>
                             <input type="email" class="form-control" id="email" name="email" required>
@@ -47,10 +62,7 @@
                                 <option value="head_of_department">Head of Department</option>
                             </select>
                         </div>
-                        <div class="mb-4">
-                            <label for="password" class="form-label">Password:</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
+                      
                         <input type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2" value="Sign Up">
                     </form>
                     <div class="d-flex align-items-center justify-content-center">

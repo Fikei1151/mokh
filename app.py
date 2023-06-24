@@ -17,7 +17,7 @@ from statistics_api import daily_statistics, weekly_statistics, monthly_statisti
 from api import *
 import urllib.parse
 from flask_migrate import Migrate
-import logging
+from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import func
 from pytz import timezone  # Import this
 import pytz
@@ -31,7 +31,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://nzxygpbspgyhsc:3be6e47dafc
 
 #db.init_app(app)
 app.secret_key = os.urandom(24)
-scheduler = APScheduler() 
+scheduler = BackgroundScheduler(timezone='Asia/Bangkok')
 migrate = Migrate(app, db)
 db.init_app(app)
 
@@ -77,6 +77,7 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        # รับค่าที่มาจากฟอร์ม
         id_card = request.form['id_card']
         password = request.form['password']
         name = request.form['name']
@@ -84,16 +85,18 @@ def register():
         position = request.form['position']
         email = request.form['email']
         account_type = request.form['account_type']
+        gender = request.form['gender']  # ใหม่
+        # ตรวจสอบว่ามีผู้ใช้ที่มีรหัสประจำตัวประชาชนนี้หรือไม่
         existing_user = User.query.get(id_card)
         if existing_user:
             flash('ID card already exists.', 'danger')
         else:
-            new_user = User(id_card=id_card, password=password, name=name, surname=surname, position=position, email=email, account_type=account_type)  # กำหนดค่าใหม่
+            # สร้างผู้ใช้ใหม่
+            new_user = User(id_card=id_card, password=password, name=name, surname=surname, position=position, email=email, account_type=account_type, gender=gender)
             db.session.add(new_user)
             db.session.commit()
             flash('Registration successful. Please log in.', 'success')
             return redirect(url_for('register'))
-            #return redirect(url_for('web_login'))
     return render_template('register.html')
 
 
@@ -467,6 +470,7 @@ def get_latest_checkout(id_card):
 
 
 
+
 def check_attendance():
     print("Checking attendance...")
     today = datetime.now(pytz.timezone('Asia/Bangkok')).date()
@@ -487,21 +491,14 @@ def check_attendance():
             absence = Attendance(employee_id=user.id_card, check_in_timestamp=today, check_out_timestamp=today, status='ขาด')
             db.session.add(absence)
             print(f"User {user.id_card} is absent")
-
-    
-    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=00)
-    scheduler.init_app(app)
-    scheduler.start()
     db.session.commit()
-
-
     print(f"Finished checking attendance for {today}")
 
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=00)
-scheduler.init_app(app)
+# ทำให้มั่นใจว่ามีแค่งานเดียวใน scheduler
+if not scheduler.get_job('attendance_check_job'):
+    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=0)
+
 scheduler.start()
-
-
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
