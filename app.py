@@ -148,16 +148,23 @@ def profile(id_card):
     # Add leaves to the template
     return render_template('profile.html', user=user, attendances=attendances, leaves=leaves)
 
-
 @app.route('/delete_user/<string:id_card>', methods=['POST'])
 def delete_user(id_card):
     user = User.query.get(id_card)
     if user:
+        # Delete user's attendances
+        Attendance.query.filter_by(employee_id=id_card).delete()
+
+        # Delete user's leaves
+        Leave.query.filter_by(employee_id=id_card).delete()
+
+        # Delete the user
         db.session.delete(user)
         db.session.commit()
         return redirect(url_for('index'))
     else:
         return "User not found", 404
+
 
 @app.route('/holidays', methods=['GET', 'POST'])
 def holidays():
