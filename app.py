@@ -491,14 +491,16 @@ def check_attendance():
         # ถ้าเป็นวันหยุด ควรจะไม่ทำการตรวจสอบว่าพนักงานขาดงาน
         print(f"Today {today} is a holiday, skipping attendance check")
         return
-
+    start_of_day = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = start_of_day + timedelta(days=1) - timedelta(seconds=1)
+    ...
     users = User.query.all()
 
     for user in users:
         attendance = Attendance.query.filter_by(employee_id=user.id_card).filter(func.date(Attendance.check_in_timestamp) == today).first()
         if not attendance:
             # User did not check in today, mark as absence
-            absence = Attendance(employee_id=user.id_card, check_in_timestamp=today, check_out_timestamp=today, status='ขาด')
+            absence = Attendance(employee_id=user.id_card, check_in_timestamp=start_of_day, check_out_timestamp=end_of_day, status='ขาด')
             db.session.add(absence)
             print(f"User {user.id_card} is absent")
     db.session.commit()
@@ -506,7 +508,7 @@ def check_attendance():
 
 # ทำให้มั่นใจว่ามีแค่งานเดียวใน scheduler
 if not scheduler.get_job('attendance_check_job'):
-    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=0)
+    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=10, minute=35)
 
 scheduler.start()
 if __name__ == '__main__':
