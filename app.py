@@ -507,7 +507,7 @@ def check_attendance():
 
 # ทำให้มั่นใจว่ามีแค่งานเดียวใน scheduler
 if not scheduler.get_job('attendance_check_job'):
-    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=10, minute=43)
+    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=10, minute=45)
 
 scheduler.start()
 if __name__ == '__main__':
