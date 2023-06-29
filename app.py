@@ -40,7 +40,6 @@ class MonthForm(FlaskForm):
 
 
 
-
 @app.route('/')
 def home():
     return redirect(url_for('web_login'))
@@ -492,7 +491,7 @@ def check_attendance():
             return
         start_of_day = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         end_of_day = start_of_day + timedelta(days=1) - timedelta(seconds=1)
-        ...
+        
         users = User.query.all()
 
         for user in users:
@@ -505,11 +504,9 @@ def check_attendance():
         db.session.commit()
         print(f"Finished checking attendance for {today}")
 
-# ทำให้มั่นใจว่ามีแค่งานเดียวใน scheduler
-if not scheduler.get_job('attendance_check_job'):
-    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=10, minute=50)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=11, minute=10)
 
-scheduler.start()
+#scheduler.start()
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
