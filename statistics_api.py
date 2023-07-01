@@ -30,7 +30,7 @@ def daily_statistics():
 
     total_attendance = Attendance.query.filter(func.date(Attendance.check_in_timestamp)==today).count()
     total_late = Attendance.query.filter(and_(func.date(Attendance.check_in_timestamp)==today, Attendance.status=='สาย')).count()
-    total_absent = Attendance.query.filter(and_(func.date(Attendance.check_in_timestamp)==today, Attendance.status=='absent')).count()
+    total_absent = Attendance.query.filter(and_(func.date(Attendance.check_in_timestamp)==today, Attendance.status=='ขาด')).count()
     total_no_checkout = Attendance.query.filter(and_(func.date(Attendance.check_in_timestamp)==today, Attendance.check_out_timestamp.is_(None))).count()
     total_leave = Leave.query.filter(and_(Leave.start_date<=today, Leave.end_date>=today, Leave.status=='อนุมัติ')).count()
 
@@ -58,7 +58,7 @@ def weekly_statistics():
 
     total_attendance = Attendance.query.filter(Attendance.check_in_timestamp.between(start_of_week, end_of_week)).count()
     total_late = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_week, end_of_week), Attendance.status=='สาย')).count()
-    total_absent = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_week, end_of_week), Attendance.status=='absent')).count()
+    total_absent = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_week, end_of_week), Attendance.status=='ขาด')).count()
     total_no_checkout = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_week, end_of_week), Attendance.check_out_timestamp.is_(None))).count()
     total_leave = Leave.query.filter(and_(Leave.start_date.between(start_of_week, end_of_week), Leave.status=='อนุมัติ')).count()
 
@@ -87,7 +87,7 @@ def monthly_statistics():
 
     total_attendance = Attendance.query.filter(Attendance.check_in_timestamp.between(start_of_month, end_of_month)).count()
     total_late = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_month, end_of_month), Attendance.status=='สาย')).count()
-    total_absent = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_month, end_of_month), Attendance.status=='absent')).count()
+    total_absent = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_month, end_of_month), Attendance.status=='ขาด')).count()
     total_no_checkout = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_month, end_of_month), Attendance.check_out_timestamp.is_(None))).count()
     total_leave = Leave.query.filter(and_(Leave.start_date.between(start_of_month, end_of_month), Leave.status=='อนุมัติ')).count()
 
