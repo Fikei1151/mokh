@@ -504,9 +504,11 @@ def check_attendance():
         db.session.commit()
         print(f"Finished checking attendance for {today}")
 
-#scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=11, minute=30)
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', hour=11, minute=30)
+if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()):
+    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=11, minute=30)
+
 scheduler.start()
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
