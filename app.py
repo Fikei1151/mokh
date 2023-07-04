@@ -296,6 +296,7 @@ def checkin_shift():
     except Exception as e:
         print(e)
         return {"message": "error"}, 400
+    
 @app.route('/api/attendance_history/<string:id_card>', methods=['GET'])
 def attendance_history(id_card):
     attendances = Attendance.query.filter_by(id_card=id_card).order_by(Attendance.timestamp.desc()).all()
