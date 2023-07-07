@@ -104,8 +104,8 @@ def register():
 
 @app.route('/index')
 def index():
-    if 'user_id' not in session:
-        return redirect(url_for('web_login'))
+    # if 'user_id' not in session:
+    #     return redirect(url_for('web_login'))
 
     page = request.args.get('page', 1, type=int)
     users = User.query.order_by(User.name, User.surname).paginate(page=page, per_page=10)
@@ -478,32 +478,28 @@ def get_latest_checkout(id_card):
         "check_out_timestamp": attendance.check_out_timestamp.isoformat()
     }), 200
 
+class JobRun(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    job_name = db.Column(db.String(50), nullable=False)
+    run_date = db.Column(db.Date, nullable=False)
 
 def check_attendance():
     with app.app_context():
         print("Checking attendance...")
         today = datetime.now(pytz.timezone('Asia/Bangkok')).date()
 
-        # ตรวจสอบว่าเป็นวันหยุดหรือไม่
-        holiday = Holiday.query.filter_by(date=today).first()
-        if holiday:
-            # ถ้าเป็นวันหยุด ควรจะไม่ทำการตรวจสอบว่าพนักงานขาดงาน
-            print(f"Today {today} is a holiday, skipping attendance check")
+        # Check if this job already ran today
+        job_run = JobRun.query.filter_by(job_name='check_attendance', run_date=today).first()
+        if job_run:
+            print(f"Job already ran today at {today}, skipping")
             return
-        start_of_day = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        end_of_day = start_of_day + timedelta(days=1) - timedelta(seconds=1)
-        
-        users = User.query.all()
 
-        for user in users:
-            attendance = Attendance.query.filter_by(employee_id=user.id_card).filter(func.date(Attendance.check_in_timestamp) == today).first()
-            if not attendance:
-                # User did not check in today, mark as absence
-                absence = Attendance(employee_id=user.id_card, check_in_timestamp=start_of_day, check_out_timestamp=end_of_day, status='ขาด')
-                db.session.add(absence)
-                print(f"User {user.id_card} is absent")
+        # Rest of your function here...
+
+        # At the end of the function, record that this job ran
+        job_run = JobRun(job_name='check_attendance', run_date=today)
+        db.session.add(job_run)
         db.session.commit()
-        print(f"Finished checking attendance for {today}")
 
 if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
     scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=11, minute=30)
