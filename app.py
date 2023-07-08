@@ -210,6 +210,7 @@ def app_login():
     session['id_card'] = id_card
     if user and user.password == password:
         return jsonify({
+            "id": id_card,  # ใช้ id_card ในฟิลด์ id
             "result": "success", 
             "username": user.name + ' ' + user.surname, 
             "position": user.position, 
@@ -217,6 +218,7 @@ def app_login():
         })
     else:
         return jsonify({"result": "error"})
+
 
     
 
