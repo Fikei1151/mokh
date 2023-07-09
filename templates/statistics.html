@@ -2,19 +2,18 @@
 
 {% block content %}
 
-<h1 class="text-center my-4">Attendance Statistics</h1>
+<h1 class="text-center my-4">สถิติการเข้างาน</h1>
 <div class="container">
     <div class="row">
-        <!-- Daily Statistics -->
-        <h3 class="my-4">Daily Statistics ({{ daily_stats['date'] }})</h3>
-        <h2>Current time in Bangkok:</h2>
-<p>{{ current_time }}</p>
-
+        <!-- สถิติรายวัน -->
+        <h3 class="my-4">สถิติรายวัน ({{ daily_stats['date'] }})</h3>
+        <h2>เวลาปัจจุบันในกรุงเทพฯ:</h2>
+        <p>{{ current_time }}</p>
 
         <div class="col-md-3">
             <div class="card text-white bg-info mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Absences</h5>
+                    <h5 class="card-title">การขาดงาน</h5>
                     <p class="card-text">{{ daily_stats['total_absent'] }}</p>
                 </div>
             </div>
@@ -23,7 +22,7 @@
         <div class="col-md-3">
             <div class="card text-white bg-success mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Leaves</h5>
+                    <h5 class="card-title">การลางาน</h5>
                     <p class="card-text">{{ daily_stats['total_leave'] }}</p>
                 </div>
             </div>
@@ -32,7 +31,7 @@
         <div class="col-md-3">
             <div class="card text-white bg-warning mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Late Arrivals</h5>
+                    <h5 class="card-title">การมาสาย</h5>
                     <p class="card-text">{{ daily_stats['total_late'] }}</p>
                 </div>
             </div>
@@ -41,60 +40,61 @@
         <div class="col-md-3">
             <div class="card text-white bg-danger mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Missed Check-outs</h5>
+                    <h5 class="card-title">การลืมลงชื่อออก</h5>
                     <p class="card-text">{{ daily_stats['total_no_checkout'] }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Weekly Statistics -->
-        <h3 class="my-4">Weekly Statistics</h3>
-        <div class="col-md-3">
+        <!-- สถิติรายสัปดาห์ -->
+        <h3 class="my-4">สถิติรายสัปดาห์</h3>
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Week: {{ weekly_stats['week'] }}</h5>
-                    <p class="card-text">Leaves: {{ weekly_stats['total_leave'] }}</p>
-                    <p class="card-text">Absences: {{ weekly_stats['total_absent'] }}</p>
-                    <p class="card-text">Late Arrivals: {{ weekly_stats['total_late'] }}</p>
-                    <p class="card-text">Missed Check-outs: {{ weekly_stats['total_no_checkout'] }}</p>
+                    <h5 class="card-title">สัปดาห์: {{ weekly_stats['week'] }}</h5>
+                    <p class="card-text">การลางาน: {{ weekly_stats['total_leave'] }}</p>
+                    <p class="card-text">การขาดงาน: {{ weekly_stats['total_absent'] }}</p>
+                    <p class="card-text">การมาสาย: {{ weekly_stats['total_late'] }}</p>
+                    <p class="card-text">การลืมลงชื่อออก: {{ weekly_stats['total_no_checkout'] }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Top 5 Weekly Late Arrivals -->
-        <h3 class="my-4">Top 5 Weekly Late Arrivals</h3>
+        <!-- 5 อันดับการมาสายรายสัปดาห์ -->
+        <h3 class="my-4">5 อันดับการมาสายรายสัปดาห์</h3>
         {% for employee in weekly_stats['top_5_late'] %}
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Employee ID: {{ employee.employee_id }}</h5>
-                    <p class="card-text">Late Count: {{ employee.late_count }}</p>
+                    <h5 class="card-title">รหัสพนักงาน: {{ employee.employee_id }}</h5>
+                    <p class="card-text">จำนวนการมาสาย: {{ employee.late_count }}</p>
                 </div>
             </div>
         </div>
         {% endfor %}
 
-        <!-- Monthly Statistics -->
-        <h3 class="my-4">Monthly Statistics</h3>
-        <div class="col-md-3">
+        <!-- สถิติรายเดือน -->
+        <h3 class="my-4">สถิติรายเดือน</h3>
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Month: {{ monthly_stats['month'] }}</h5>
-                    <p class="card-text">Leaves: {{ monthly_stats['total_leave'] }}</p>
-                    <p class="card-text">Absences: {{ monthly_stats['total_absent'] }}</p>
-                    <p class="card-text">Late Arrivals: {{ monthly_stats['total_late'] }}</p>
-                    <p class="card-text">Missed Check-outs: {{ monthly_stats['total_no_checkout'] }}</p>
+                    <h5 class="card-title">เดือน: {{ monthly_stats['month'] }}</h5>
+                    <p class="card-text">การลางาน: {{ monthly_stats['total_leave'] }}</p>
+                    <p class="card-text">การขาดงาน: {{ monthly_stats['total_absent'] }}</p>
+                    <p class="card-text">การมาสาย: {{ monthly_stats['total_late'] }}</p>
+                    <p class="card-text">การลืมลงชื่อออก: {{ monthly_stats['total_no_checkout'] }}</p>
                 </div>
             </div>
         </div>
-        <!-- Top 5 Monthly Late Arrivals -->
-        <h3 class="my-4">Top 5 Monthly Late Arrivals</h3>
+
+        <!-- 5 อันดับการมาสายรายเดือน -->
+        <h3 class="my-4">5 อันดับการมาสายรายเดือน</h3>
         {% for employee in monthly_stats['top_5_late'] %}
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Employee ID: {{ employee.employee_id }}</h5>
-                    <p class="card-text">Late Count: {{ employee.late_count }}</p>
+                    <h5 class="card-title">รหัสพนักงาน: {{ employee.employee_id }}</h5>
+                    <p class="card-text">จำนวนการมาสาย: {{ employee.late_count }}</p>
                 </div>
             </div>
         </div>

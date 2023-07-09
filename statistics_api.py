@@ -50,7 +50,6 @@ def daily_statistics():
         'total_leave': total_leave,
         'top_5_late': [dict(employee_id=i[0], late_count=i[1]) for i in top_5_late]
     }
-
 @app.route('/statistics/weekly', methods=['GET'])
 def weekly_statistics():
     today = datetime.now().date()
@@ -61,7 +60,6 @@ def weekly_statistics():
     total_absent = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_week, end_of_week), Attendance.status=='ขาด')).count()
     total_no_checkout = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_week, end_of_week), Attendance.check_out_timestamp.is_(None))).count()
     total_leave = Leave.query.filter(and_(Leave.start_date.between(start_of_week, end_of_week), Leave.status=='อนุมัติ')).count()
-
 
     top_5_late = (db.session.query(Attendance.employee_id, func.count(Attendance.id).label('count'))
                   .filter(and_(Attendance.check_in_timestamp.between(start_of_week, end_of_week), Attendance.status=='สาย'))
@@ -107,4 +105,3 @@ def monthly_statistics():
         'total_leave': total_leave,
         'top_5_late': [dict(employee_id=i[0], late_count=i[1]) for i in top_5_late]
     })
-

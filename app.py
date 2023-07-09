@@ -14,8 +14,6 @@ from wtforms.validators import DataRequired
 from models import User, Attendance, Leave,Holiday,DailyStatistics
 from database import db
 from statistics_api import daily_statistics, weekly_statistics, monthly_statistics, week_range, month_range
-from api import *
-import urllib.parse
 from flask_migrate import Migrate
 from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import func
@@ -200,6 +198,24 @@ def statistics():
     monthly_stats = monthly_statistics() # no argument here
 
     return render_template('statistics.html', daily_stats=daily_stats, weekly_stats=weekly_stats, monthly_stats=monthly_stats, current_time=now)
+
+@app.route('/summary', methods=['GET', 'POST'])
+def summary():
+    if request.method == 'POST':
+        start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        summary_type = request.form['summary_type']
+
+        # Query the database for the specified summary type and date range
+        if summary_type == 'leave':
+            summary_data = Leave.query.filter(Leave.start_date >= start_date, Leave.end_date <= end_date).all()
+        elif summary_type == 'attendance':
+            summary_data = Attendance.query.filter(Attendance.check_in_timestamp >= start_date, Attendance.check_out_timestamp <= end_date).all()
+        # Add more elif statements here for other summary types
+
+        return render_template('summary.html', summary_data=summary_data, summary_type=summary_type)
+
+    return render_template('summary.html')
 
 @app.route('/api/login', methods=['POST'])
 def app_login():
