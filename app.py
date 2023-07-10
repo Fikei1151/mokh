@@ -25,11 +25,11 @@ statusUpdates = [] # ตรงนี้ครับยรย
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://nzxygpbspgyhsc:3be6e47dafcf9fa02e49c334c34e009b789826dc99d3b2f7e12ab02ad4089b93@ec2-34-226-11-94.compute-1.amazonaws.com:5432/d1guu50dk4lm9q'
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-
+bangkok_tz = pytz.timezone('Asia/Bangkok')
 
 #db.init_app(app)
 app.secret_key = os.urandom(24)
-scheduler = APScheduler()
+scheduler = BackgroundScheduler(timezone='Asia/Bangkok')
 scheduler.init_app(app)
 migrate = Migrate(app, db)
 db.init_app(app)
@@ -506,7 +506,7 @@ class JobRun(db.Model):
 def check_attendance():
     with app.app_context():
         print("Checking attendance...")
-        now = datetime.now(pytz.timezone('Asia/Bangkok'))
+        now = datetime.now(bangkok_tz)
 
         # Check if this job already ran today
         job_run_today = JobRun.query.filter(JobRun.job_name=='check_attendance', func.date(JobRun.run_time)==now.date()).first()
@@ -542,7 +542,7 @@ def check_attendance():
         db.session.commit()
 
 # if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=42)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=52)
 
 if os.getenv('FLASK_ENV') == 'production':
     scheduler.start()
