@@ -32,7 +32,7 @@ app.secret_key = os.urandom(24)
 scheduler = BackgroundScheduler(timezone='Asia/Bangkok')
 migrate = Migrate(app, db)
 db.init_app(app)
-RUN_APSCHEDULER = os.environ.get('RUN_APSCHEDULER')
+# RUN_APSCHEDULER = os.environ.get('RUN_APSCHEDULER')
 class MonthForm(FlaskForm):
     month = SelectField('เลือกเดือน', choices=[], validators=[DataRequired()])
 
@@ -547,10 +547,10 @@ def check_attendance():
 
 
         
-if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-     scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=48)
+# if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=52)
 
-# scheduler.start()
+scheduler.start()
 
 if __name__ == '__main__':
     with app.app_context():
