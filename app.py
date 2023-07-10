@@ -496,7 +496,6 @@ def get_latest_checkout(id_card):
         "message": "The user has checked out.",
         "check_out_timestamp": attendance.check_out_timestamp.isoformat()
     }), 200
-
 class JobRun(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     job_name = db.Column(db.String(50), nullable=False)
@@ -509,8 +508,7 @@ def check_attendance():
         now = datetime.now(pytz.timezone('Asia/Bangkok'))
 
         # Check if this job already ran today
-        job_run_today = JobRun.query.filter(JobRun.job_name=='check_attendance', 
-                                             func.date(JobRun.run_time) == func.date(now)).first()
+        job_run_today = JobRun.query.filter(JobRun.job_name=='check_attendance', func.date(JobRun.run_time)==now.date()).first()
         if job_run_today:
             print(f"Job already ran today at {now.date()}, skipping")
             return
@@ -538,11 +536,12 @@ def check_attendance():
         print(f"Finished checking attendance for {now.date()}")
 
         # At the end of the function, record that this job ran
-        job_run = JobRun(job_name='check_attendance',  run_time=now, status='Completed')  # Changed run_date to run_time and added job_id and status
+        job_run = JobRun(job_name='check_attendance',  run_time=now, status='Completed')  
         db.session.add(job_run)
         db.session.commit()
 
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=17)
+# if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=28)
 scheduler.start()
 
 if __name__ == '__main__':
