@@ -5,14 +5,14 @@ from flask_migrate import Migrate
 from sqlalchemy import func
 from pytz import timezone  # Import this
 import pytz
+from threading import Lock
 
-
-
+lock = Lock()
 bangkok_tz = pytz.timezone('Asia/Bangkok')
 
 def check_attendance():
     from app import app
-    with app.app_context():
+    with lock, app.app_context():
         print("Checking attendance...")
         now = datetime.now(bangkok_tz)
 
