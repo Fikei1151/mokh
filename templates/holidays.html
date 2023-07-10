@@ -1,16 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>วันหยุด</h1>
-<form method="POST">
-    <label for="date">วันที่:</label>
-    <input type="date" id="date" name="date" required>
-    <label for="name">ชื่อวันหยุด:</label>
-    <input type="text" id="name" name="name" required>
-    <input type="submit" value="เพิ่มวันหยุด">
-</form>
-<ul>
-    {% for holiday in holidays %}
-    <li>{{ holiday.date }}: {{ holiday.name }}</li>
-    {% endfor %}
-</ul>
+<div class="container my-4">
+    <h1 class="text-center">วันหยุด</h1>
+    <form method="POST" class="row g-3">
+        <div class="col-md-6">
+            <label for="date" class="form-label">วันที่:</label>
+            <input type="date" class="form-control" id="date" name="date" required>
+        </div>
+        <div class="col-md-6">
+            <label for="name" class="form-label">ชื่อวันหยุด:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">เพิ่มวันหยุด</button>
+        </div>
+    </form>
+    <ul class="list-group mt-4">
+        {% for holiday in holidays %}
+        <li class="list-group-item">{{ holiday.date }}: {{ holiday.name }}</li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

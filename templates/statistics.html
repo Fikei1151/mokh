@@ -2,13 +2,16 @@
 
 {% block content %}
 
-<h1 class="text-center my-4">สถิติการเข้างาน</h1>
-<div class="container">
+<div class="container my-4">
+    <h1 class="text-center">สถิติการเข้างาน</h1>
+
     <div class="row">
         <!-- สถิติรายวัน -->
-        <h3 class="my-4">สถิติรายวัน ({{ daily_stats['date'] }})</h3>
-        <h2>เวลาปัจจุบันในกรุงเทพฯ:</h2>
-        <p>{{ current_time }}</p>
+        <div class="col-12">
+            <h3 class="my-4">สถิติรายวัน ({{ daily_stats['date'] }})</h3>
+            <h2>เวลาปัจจุบันในกรุงเทพฯ:</h2>
+            <p>{{ current_time }}</p>
+        </div>
 
         <div class="col-md-3">
             <div class="card text-white bg-info mb-3">
@@ -47,8 +50,8 @@
         </div>
 
         <!-- สถิติรายสัปดาห์ -->
-        <h3 class="my-4">สถิติรายสัปดาห์</h3>
-        <div class="col-md-12">
+        <div class="col-12">
+            <h3 class="my-4">สถิติรายสัปดาห์</h3>
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">สัปดาห์: {{ weekly_stats['week'] }}</h5>
@@ -61,21 +64,25 @@
         </div>
 
         <!-- 5 อันดับการมาสายรายสัปดาห์ -->
-        <h3 class="my-4">5 อันดับการมาสายรายสัปดาห์</h3>
-        {% for employee in weekly_stats['top_5_late'] %}
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">รหัสพนักงาน: {{ employee.employee_id }}</h5>
-                    <p class="card-text">จำนวนการมาสาย: {{ employee.late_count }}</p>
+        <div class="col-12">
+            <h3 class="my-4">5 อันดับการมาสายรายสัปดาห์</h3>
+            <div class="row">
+                {% for employee in weekly_stats['top_5_late'] %}
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">รหัสพนักงาน: {{ employee.employee_id }}</h5>
+                            <p class="card-text">จำนวนการมาสาย: {{ employee.late_count }}</p>
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
 
         <!-- สถิติรายเดือน -->
-        <h3 class="my-4">สถิติรายเดือน</h3>
-        <div class="col-md-12">
+        <div class="col-12">
+            <h3 class="my-4">สถิติรายเดือน</h3>
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">เดือน: {{ monthly_stats['month'] }}</h5>
@@ -88,17 +95,22 @@
         </div>
 
         <!-- 5 อันดับการมาสายรายเดือน -->
-        <h3 class="my-4">5 อันดับการมาสายรายเดือน</h3>
-        {% for employee in monthly_stats['top_5_late'] %}
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">รหัสพนักงาน: {{ employee.employee_id }}</h5>
-                    <p class="card-text">จำนวนการมาสาย: {{ employee.late_count }}</p>
+        <div class="col-12">
+            <h3 class="my-4">5 อันดับการมาสายรายเดือน</h3>
+            <div class="row">
+                {% for employee in monthly_stats['top_5_late'] %}
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">รหัสพนักงาน: {{ employee.employee_id }}</h5>
+                            <p class="card-text">จำนวนการมาสาย: {{ employee.late_count }}</p>
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
     </div>
 </div>
+
 {% endblock %}
