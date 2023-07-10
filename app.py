@@ -542,10 +542,10 @@ def check_attendance():
         db.session.commit()
 
 # if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=00)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=3)
 
-if os.getenv('FLASK_ENV') == 'production':
-    scheduler.start()
+
+scheduler.start()
 
 
 if __name__ == '__main__':
