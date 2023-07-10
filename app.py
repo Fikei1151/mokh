@@ -29,7 +29,7 @@ bangkok_tz = pytz.timezone('Asia/Bangkok')
 
 #db.init_app(app)
 app.secret_key = os.urandom(24)
-scheduler = BackgroundScheduler(timezone='Asia/Bangkok')
+scheduler = APScheduler()
 scheduler.init_app(app)
 migrate = Migrate(app, db)
 db.init_app(app)
@@ -542,7 +542,7 @@ def check_attendance():
         db.session.commit()
 
 # if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=55)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=00)
 
 if os.getenv('FLASK_ENV') == 'production':
     scheduler.start()
