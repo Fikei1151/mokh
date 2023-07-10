@@ -16,15 +16,6 @@ def check_attendance():
         print("Checking attendance...")
         now = datetime.now(bangkok_tz)
 
-        # Check if this job already ran today
-        job_run_today = JobRun.query.filter(
-            JobRun.job_name == 'check_attendance',
-            func.date(JobRun.run_time) == now.date()
-        ).first()
-        if job_run_today:
-            print(f"Job already ran today at {now.date()}, skipping")
-            return
-
         # Check if it's a holiday
         holiday = Holiday.query.filter_by(date=now.date()).first()
         if holiday:
@@ -47,8 +38,4 @@ def check_attendance():
         db.session.commit()
         print(f"Finished checking attendance for {now.date()}")
 
-        # At the end of the function, record that this job ran
-        job_run = JobRun(job_name='check_attendance',  run_time=now, status='Completed')  
-        db.session.add(job_run)
-        db.session.commit()
         pass
