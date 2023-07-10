@@ -504,7 +504,7 @@ class JobRun(db.Model):
     status = db.Column(db.String(50), nullable=False)
 
 def check_attendance():
-    with app.app_context():
+    # with app.app_context():
         print("Checking attendance...")
         now = datetime.now(pytz.timezone('Asia/Bangkok'))
 
@@ -549,7 +549,7 @@ def check_attendance():
 
         
 # if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=3)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=5)
 scheduler.start()
 
 if __name__ == '__main__':
