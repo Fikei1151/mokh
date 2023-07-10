@@ -518,10 +518,9 @@ def check_attendance():
         job_run = JobRun(job_name='check_attendance', run_date=today)
         db.session.add(job_run)
         db.session.commit()
-
+        
 if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', hour=11, minute=30)
-
+    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=11, minute=30)
 
 scheduler.start()
 
