@@ -510,6 +510,10 @@ def check_attendance():
         job_run = JobRun.query.filter_by(job_name='check_attendance', run_date=today).first()
         if job_run:
             print(f"Job already ran today at {today}, skipping")
+            # At the end of the function, record that this job ran
+            job_run = JobRun(job_name='check_attendance', run_date=today)
+            db.session.add(job_run)
+            db.session.commit()
             return
 
         # Check if it's a holiday
@@ -517,7 +521,12 @@ def check_attendance():
         if holiday:
             # If it's a holiday, don't check for absence
             print(f"Today {today} is a holiday, skipping attendance check")
+            # At the end of the function, record that this job ran
+            job_run = JobRun(job_name='check_attendance', run_date=today)
+            db.session.add(job_run)
+            db.session.commit()
             return
+
         start_of_day = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         end_of_day = start_of_day + timedelta(days=1) - timedelta(seconds=1)
         
@@ -537,6 +546,7 @@ def check_attendance():
         job_run = JobRun(job_name='check_attendance', run_date=today)
         db.session.add(job_run)
         db.session.commit()
+
 
         
 if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
