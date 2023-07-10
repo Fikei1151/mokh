@@ -499,8 +499,8 @@ def get_latest_checkout(id_card):
 class JobRun(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     job_name = db.Column(db.String(50), nullable=False)
-    run_time = db.Column(db.DateTime, nullable=False)  # Renamed run_date to run_time
-    status = db.Column(db.String(50), nullable=False)  # Added this line
+    run_time = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.String(50), nullable=False)
 
 def check_attendance():
     with app.app_context():
@@ -519,7 +519,8 @@ def check_attendance():
             # If it's a holiday, don't check for absence
             print(f"Today {now.date()} is a holiday, skipping attendance check")
             # At the end of the function, record that this job ran
-            job_run = JobRun(job_name='check_attendance', job_id=1, run_time=now, status='Completed')  # Changed run_date to run_time and added job_id and status
+            job_run = JobRun(job_name='check_attendance', run_time=now, status='Completed')
+  # Changed run_date to run_time and added job_id and status
             db.session.add(job_run)
             db.session.commit()
             return
@@ -540,14 +541,14 @@ def check_attendance():
         print(f"Finished checking attendance for {now.date()}")
 
         # At the end of the function, record that this job ran
-        job_run = JobRun(job_name='check_attendance', run_time=now, status='Completed')  # Changed run_date to run_time and added job_id and status
+        job_run = JobRun(job_name='check_attendance', job_id=1, run_time=now, status='Completed')  # Changed run_date to run_time and added job_id and status
         db.session.add(job_run)
         db.session.commit()
 
 
         
 # if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=20)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=43)
 
 scheduler.start()
 
