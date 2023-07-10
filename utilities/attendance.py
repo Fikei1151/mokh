@@ -5,12 +5,13 @@ from flask_migrate import Migrate
 from sqlalchemy import func
 from pytz import timezone  # Import this
 import pytz
-from app import app
+
 
 
 bangkok_tz = pytz.timezone('Asia/Bangkok')
 
 def check_attendance():
+    from app import app
     with app.app_context():
         print("Checking attendance...")
         now = datetime.now(bangkok_tz)
@@ -50,3 +51,4 @@ def check_attendance():
         job_run = JobRun(job_name='check_attendance',  run_time=now, status='Completed')  
         db.session.add(job_run)
         db.session.commit()
+        pass
