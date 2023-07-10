@@ -29,7 +29,7 @@ bangkok_tz = pytz.timezone('Asia/Bangkok')
 
 #db.init_app(app)
 app.secret_key = os.urandom(24)
-scheduler = BackgroundScheduler(timezone='Asia/Bangkok')
+scheduler = APScheduler()
 scheduler.init_app(app)
 migrate = Migrate(app, db)
 db.init_app(app)
