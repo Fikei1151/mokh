@@ -504,14 +504,15 @@ class JobRun(db.Model):
     status = db.Column(db.String(50), nullable=False)
 
 def check_attendance():
-    # with app.app_context():
+    with app.app_context():
         print("Checking attendance...")
         now = datetime.now(pytz.timezone('Asia/Bangkok'))
 
         # Check if this job already ran today
-        job_run = JobRun.query.filter_by(job_name='check_attendance', run_time=now).first()  # Changed run_date to run_time
-        if job_run:
-            print(f"Job already ran today at {now}, skipping")
+        job_run_today = JobRun.query.filter(JobRun.job_name=='check_attendance', 
+                                             func.date(JobRun.run_time) == func.date(now)).first()
+        if job_run_today:
+            print(f"Job already ran today at {now.date()}, skipping")
             return
 
         # Check if it's a holiday
@@ -519,11 +520,6 @@ def check_attendance():
         if holiday:
             # If it's a holiday, don't check for absence
             print(f"Today {now.date()} is a holiday, skipping attendance check")
-            # At the end of the function, record that this job ran
-            job_run = JobRun(job_name='check_attendance', run_time=now, status='Completed')
-  # Changed run_date to run_time and added job_id and status
-            db.session.add(job_run)
-            db.session.commit()
             return
 
         start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -546,10 +542,7 @@ def check_attendance():
         db.session.add(job_run)
         db.session.commit()
 
-
-        
-# if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=5)
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=17)
 scheduler.start()
 
 if __name__ == '__main__':
