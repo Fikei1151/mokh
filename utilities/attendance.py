@@ -5,17 +5,21 @@ from flask_migrate import Migrate
 from sqlalchemy import func
 from pytz import timezone  # Import this
 import pytz
+from app import app
 
 
 bangkok_tz = pytz.timezone('Asia/Bangkok')
 
 def check_attendance():
-    # with app.app_context():
+    with app.app_context():
         print("Checking attendance...")
         now = datetime.now(bangkok_tz)
 
         # Check if this job already ran today
-        job_run_today = JobRun.query.filter(JobRun.job_name=='check_attendance', func.date(JobRun.run_time)==now.date()).first()
+        job_run_today = JobRun.query.filter(
+            JobRun.job_name == 'check_attendance',
+            func.date(JobRun.run_time) == now.date()
+        ).first()
         if job_run_today:
             print(f"Job already ran today at {now.date()}, skipping")
             return
