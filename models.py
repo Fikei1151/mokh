@@ -67,3 +67,9 @@ class DailyStatistics(db.Model):
     total_absent = db.Column(db.Integer, default=0)
     total_late = db.Column(db.Integer, default=0)
     total_not_checked_out = db.Column(db.Integer, default=0)
+
+class JobRun(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    job_name = db.Column(db.String(50), nullable=False)
+    run_time = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.String(50), nullable=False)
