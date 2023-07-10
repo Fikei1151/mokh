@@ -548,9 +548,9 @@ def check_attendance():
 
         
 if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-     scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=46)
+     scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=19, minute=48)
 
-scheduler.start()
+# scheduler.start()
 
 if __name__ == '__main__':
     with app.app_context():
