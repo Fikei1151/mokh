@@ -29,7 +29,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://nzxygpbspgyhsc:3be6e47dafc
 
 #db.init_app(app)
 app.secret_key = os.urandom(24)
-scheduler = BackgroundScheduler(timezone='Asia/Bangkok')
+scheduler = APScheduler()
+scheduler.init_app(app)
 migrate = Migrate(app, db)
 db.init_app(app)
 
@@ -541,8 +542,11 @@ def check_attendance():
         db.session.commit()
 
 # if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
-scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=28)
-scheduler.start()
+scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=20, minute=42)
+
+if os.getenv('FLASK_ENV') == 'production':
+    scheduler.start()
+
 
 if __name__ == '__main__':
     with app.app_context():
