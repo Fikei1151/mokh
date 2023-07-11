@@ -257,8 +257,8 @@ def checkin():
     check_in_timestamp = datetime.now(timezone('UTC')).astimezone(timezone('Asia/Bangkok'))
 
     # Define the work start time as 7:00 and late check-in threshold as 8:00.
-    work_start_time = check_in_timestamp.replace(hour=19, minute=5, second=0, microsecond=0)
-    late_threshold = check_in_timestamp.replace(hour=19, minute=10, second=0, microsecond=0)
+    work_start_time = check_in_timestamp.replace(hour=7, minute=0, second=0, microsecond=0)
+    late_threshold = check_in_timestamp.replace(hour=8, minute=0, second=0, microsecond=0)
 
     # If current time is earlier than work start time, return error.
     if check_in_timestamp < work_start_time:
@@ -289,8 +289,8 @@ def checkout():
     check_out_timestamp = datetime.now(timezone('UTC')).astimezone(timezone('Asia/Bangkok'))
 
     # Define the work end time window as 16:00 to 17:00.
-    work_end_start_time = check_out_timestamp.replace(hour=19, minute=15, second=0, microsecond=0)
-    work_end_end_time = check_out_timestamp.replace(hour=23, minute=0, second=0, microsecond=0)
+    work_end_start_time = check_out_timestamp.replace(hour=15, minute=45, second=0, microsecond=0)
+    work_end_end_time = check_out_timestamp.replace(hour=18, minute=0, second=0, microsecond=0)
 
     # If current time is not within work end time window, return error.
     if not (work_end_start_time <= check_out_timestamp <= work_end_end_time):
@@ -504,7 +504,7 @@ def get_latest_checkout(id_card):
 # if not any(job.id == 'attendance_check_job' for job in scheduler.get_jobs()) and RUN_APSCHEDULER:
 # scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=21, minute=13)
 if not scheduler.get_job('attendance_check_job'):
-    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=00, minute=1)
+    scheduler.add_job(id='attendance_check_job', func=check_attendance, trigger='cron', day_of_week='mon-fri', hour=18, minute=30)
 
 
 scheduler.start()
