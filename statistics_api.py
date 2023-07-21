@@ -28,14 +28,14 @@ def month_range(date=None):
 def daily_statistics():
     today = datetime.now().date()
 
-    total_attendance = Attendance.query.filter(func.date(Attendance.check_in_timestamp)==today).count()
-    total_late = Attendance.query.filter(and_(func.date(Attendance.check_in_timestamp)==today, Attendance.status=='สาย')).count()
-    total_absent = Attendance.query.filter(and_(func.date(Attendance.check_in_timestamp)==today, Attendance.status=='ขาด')).count()
-    total_no_checkout = Attendance.query.filter(and_(func.date(Attendance.check_in_timestamp)==today, Attendance.check_out_timestamp.is_(None))).count()
+    total_attendance = Attendance.query.filter(Attendance.check_in_timestamp.between(today, today + timedelta(days=1))).count()
+    total_late = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(today, today + timedelta(days=1)), Attendance.status=='สาย')).count()
+    total_absent = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(today, today + timedelta(days=1)), Attendance.status=='ขาด')).count()
+    total_no_checkout = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(today, today + timedelta(days=1)), Attendance.check_out_timestamp.is_(None))).count()
     total_leave = Leave.query.filter(and_(Leave.start_date<=today, Leave.end_date>=today, Leave.status=='อนุมัติ')).count()
 
     top_5_late = (db.session.query(Attendance.employee_id, func.count(Attendance.id).label('count'))
-                  .filter(and_(func.date(Attendance.check_in_timestamp)==today, Attendance.status=='สาย'))
+                  .filter(and_(Attendance.check_in_timestamp.between(today, today + timedelta(days=1)), Attendance.status=='สาย'))
                   .group_by(Attendance.employee_id)
                   .order_by(db.desc('count'))
                   .limit(5)
@@ -50,10 +50,12 @@ def daily_statistics():
         'total_leave': total_leave,
         'top_5_late': [dict(employee_id=i[0], late_count=i[1]) for i in top_5_late]
     }
+
 @app.route('/statistics/weekly', methods=['GET'])
 def weekly_statistics():
     today = datetime.now().date()
     start_of_week, end_of_week = week_range(today)
+    end_of_week += timedelta(days=1) # add one day to end_of_week to include it in the range
 
     total_attendance = Attendance.query.filter(Attendance.check_in_timestamp.between(start_of_week, end_of_week)).count()
     total_late = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_week, end_of_week), Attendance.status=='สาย')).count()
@@ -82,6 +84,7 @@ def weekly_statistics():
 def monthly_statistics():
     today = datetime.now().date()
     start_of_month, end_of_month = month_range(today)
+    end_of_month += timedelta(days=1) # add one day to end_of_month to include it in the range
 
     total_attendance = Attendance.query.filter(Attendance.check_in_timestamp.between(start_of_month, end_of_month)).count()
     total_late = Attendance.query.filter(and_(Attendance.check_in_timestamp.between(start_of_month, end_of_month), Attendance.status=='สาย')).count()

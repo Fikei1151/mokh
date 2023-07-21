@@ -20,7 +20,7 @@ from sqlalchemy import func
 from pytz import timezone  # Import this
 import pytz
 from utilities.attendance import check_attendance
-
+from sqlalchemy.orm import aliased
 statusUpdates = [] # ตรงนี้ครับยรย
 
 app = Flask(__name__)
@@ -202,23 +202,27 @@ def statistics():
 
     return render_template('statistics.html', daily_stats=daily_stats, weekly_stats=weekly_stats, monthly_stats=monthly_stats, current_time=now)
 
+
 @app.route('/summary', methods=['GET', 'POST'])
 def summary():
+    summary_data = None
+    summary_type = None
+
     if request.method == 'POST':
-        start_date = request.form['start_date']
-        end_date = request.form['end_date']
-        summary_type = request.form['summary_type']
+        start_date = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d')
+        end_date = datetime.strptime(request.form.get('end_date'), '%Y-%m-%d')
+        summary_type = request.form.get('summary_type')
 
-        # Query the database for the specified summary type and date range
+        UserAlias = aliased(User)
+
         if summary_type == 'leave':
-            summary_data = Leave.query.filter(Leave.start_date >= start_date, Leave.end_date <= end_date).all()
+            summary_data = db.session.query(Leave, UserAlias.name, UserAlias.id_card).join(UserAlias, Leave.employee_id == UserAlias.id_card).filter(Leave.start_date >= start_date, Leave.end_date <= end_date).all()
         elif summary_type == 'attendance':
-            summary_data = Attendance.query.filter(Attendance.check_in_timestamp >= start_date, Attendance.check_out_timestamp <= end_date).all()
-        # Add more elif statements here for other summary types
+            summary_data = db.session.query(Attendance, UserAlias.name, UserAlias.id_card).join(UserAlias, Attendance.employee_id == UserAlias.id_card).filter(Attendance.date >= start_date, Attendance.date <= end_date).all()
+        elif summary_type == 'absence':
+            summary_data = db.session.query(Attendance, UserAlias.name, UserAlias.id_card).join(UserAlias, Attendance.employee_id == UserAlias.id_card).filter(Attendance.date >= start_date, Attendance.date <= end_date, Attendance.status == 'ขาด').all()
 
-        return render_template('summary.html', summary_data=summary_data, summary_type=summary_type)
-
-    return render_template('summary.html')
+    return render_template('summary.html', summary_data=summary_data, summary_type=summary_type)
 
 @app.route('/api/login', methods=['POST'])
 def app_login():

@@ -5,27 +5,24 @@
 <h1 class="text-center my-4">สรุป</h1>
 <div class="container">
     <form method="POST">
+        {{ form.hidden_tag() }}
         <div class="row">
             <div class="col-md-3">
                 <div class="form-group">
-                    <label for="start_date">วันที่เริ่มต้น:</label>
-                    <input type="date" id="start_date" name="start_date" class="form-control" required>
+                    {{ form.start_date.label }}
+                    {{ form.start_date(class="form-control") }}
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <label for="end_date">วันที่สิ้นสุด:</label>
-                    <input type="date" id="end_date" name="end_date" class="form-control" required>
+                    {{ form.end_date.label }}
+                    {{ form.end_date(class="form-control") }}
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <label for="summary_type">ประเภทสรุป:</label>
-                    <select id="summary_type" name="summary_type" class="form-control" required>
-                        <option value="leave">การลา</option>
-                        <option value="attendance">การเข้างาน</option>
-                        <option value="absence">การขาดงาน</option>
-                    </select>
+                    {{ form.summary_type.label }}
+                    {{ form.summary_type(class="form-control") }}
                 </div>
             </div>
             <div class="col-md-3 d-flex align-items-end">
@@ -41,6 +38,8 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>ชื่อพนักงาน</th>
+                        <th>รหัสพนักงาน</th>
                         <th>วันที่เริ่มต้น</th>
                         <th>วันที่สิ้นสุด</th>
                         <th>ประเภทการลา</th>
@@ -49,8 +48,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for leave in summary_data %}
+                    {% for leave, name, id_card in summary_data %}
                         <tr>
+                            <td>{{ name }}</td>
+                            <td>{{ id_card }}</td>
                             <td>{{ leave.start_date }}</td>
                             <td>{{ leave.end_date }}</td>
                             <td>{{ leave.leave_type }}</td>
@@ -65,6 +66,8 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>ชื่อพนักงาน</th>
+                        <th>รหัสพนักงาน</th>
                         <th>วันที่</th>
                         <th>เวลาเข้างาน</th>
                         <th>เวลาออกงาน</th>
@@ -72,8 +75,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for attendance in summary_data %}
+                    {% for attendance, name, id_card in summary_data %}
                         <tr>
+                            <td>{{ name }}</td>
+                            <td>{{ id_card }}</td>
                             <td>{{ attendance.date }}</td>
                             <td>{{ attendance.check_in_time }}</td>
                             <td>{{ attendance.check_out_time }}</td>
@@ -82,22 +87,22 @@
                     {% endfor %}
                 </tbody>
             </table>
-            {% elif summary_type == 'absence' %}
+        {% elif summary_type == 'absence' %}
             <h2 class="my-4">สรุปการขาดงาน</h2>
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>วันที่</th>
                         <th>ชื่อพนักงาน</th>
                         <th>รหัสพนักงาน</th>
+                        <th>วันที่</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for absence in summary_data %}
+                    {% for absence, name, id_card in summary_data %}
                         <tr>
+                            <td>{{ name }}</td>
+                            <td>{{ id_card }}</td>
                             <td>{{ absence.date }}</td>
-                            <td>{{ absence.employee_name }}</td>
-                            <td>{{ absence.employee_id }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
